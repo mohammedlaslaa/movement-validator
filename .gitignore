@@ -1,0 +1,12 @@
+dist
+node_modules
+coverage
+
+.env
+.env.*
+
+*.log
+.DS_Store
+
+.codex
+todo.md
