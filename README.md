@@ -115,6 +115,23 @@ pnpm install
 pnpm start:dev
 ```
 
+The API starts on `http://localhost:3000`.
+
+## Swagger
+
+Swagger UI is exposed by the running application, so there is no dedicated `pnpm swagger` script.
+
+Start the API:
+
+```bash
+pnpm start:dev
+```
+
+Then open:
+
+- `http://localhost:3000/docs` for the Swagger UI
+- `http://localhost:3000/docs-json` for the raw OpenAPI specification
+
 ## Test
 
 ```bash

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 
-import { BalanceDto } from './dto/balance.dto';
-import { MovementDto } from './dto/movement.dto';
-import { ValidateMovementsDto } from './dto/validate-movements.dto';
-import {
+import type { BalanceDto } from './dto/balance.dto';
+import type { MovementDto } from './dto/movement.dto';
+import type { ValidateMovementsDto } from './dto/validate-movements.dto';
+import type {
   ValidationAcceptedResponseDto,
-  ValidationFailedResponseDto,
   ValidationDirection,
+  ValidationFailedResponseDto,
   ValidationHintDto,
   ValidationReasonDto,
   ValidationSummaryDto,
@@ -50,7 +50,7 @@ export class MovementsValidationService {
     }
 
     const intervalReasons = this.validateIntervals(movements, balances);
-    
+
     reasons.push(...intervalReasons);
 
     const uncontrolledMovementIds = this.findUncontrolledMovementIds(
@@ -68,7 +68,12 @@ export class MovementsValidationService {
       });
     }
 
-    reasons.push(...this.buildPotentialDuplicateReasons(movements, balances));
+    const potentialDuplicateReasons = this.buildPotentialDuplicateReasons(
+      movements,
+      balances,
+    );
+
+    reasons.push(...potentialDuplicateReasons);
 
     const summary = this.buildSummary(
       balances,
@@ -81,7 +86,9 @@ export class MovementsValidationService {
     );
 
     if (!hasBlockingReason) {
-      const warnings = reasons.filter((reason) => reason.severity === 'warning');
+      const warnings = reasons.filter(
+        (reason) => reason.severity === 'warning',
+      );
 
       return {
         isValid: true,
@@ -110,8 +117,7 @@ export class MovementsValidationService {
         timestamp: this.toDayTimestamp(movement.date),
       }))
       .sort(
-        (left, right) =>
-          left.timestamp - right.timestamp || left.id - right.id,
+        (left, right) => left.timestamp - right.timestamp || left.id - right.id,
       );
   }
 
@@ -150,6 +156,8 @@ export class MovementsValidationService {
     for (let index = 1; index < balances.length; index += 1) {
       const previousBalance = balances[index - 1];
       const currentBalance = balances[index];
+
+      // Balance movements
       const intervalMovements = movements.filter(
         (movement) =>
           movement.timestamp > previousBalance.timestamp &&
@@ -167,7 +175,9 @@ export class MovementsValidationService {
         continue;
       }
 
-      const duplicateHints = this.findPotentialDuplicateHints(intervalMovements);
+      const duplicateHints =
+        this.findPotentialDuplicateHints(intervalMovements);
+
       reasons.push({
         code: 'BALANCE_MISMATCH',
         severity: 'error',
