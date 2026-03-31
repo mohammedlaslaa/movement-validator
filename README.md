@@ -1,4 +1,4 @@
-# Dougs Technical Test
+# Technical Test
 
 API NestJS to validate bank movements against trusted balance checkpoints.
 
@@ -100,6 +100,22 @@ An accepted response can also include a `reasons` array with non-blocking warnin
 4. If the values differ, report a `BALANCE_MISMATCH`.
 5. Add hints for likely duplicate groups.
 6. Report movements outside the covered range as uncontrolled.
+
+## Interval boundary convention
+
+- A balance at date `D` is interpreted as a closing balance for day `D`.
+- Therefore, an interval `D1 -> D2` includes movements with dates `> D1` and `<= D2`.
+- In other words, movements dated `D1` are already reflected in the starting balance and must not be counted again.
+
+Example:
+
+- balance `2026-01-01` = `1000`
+- movement `2026-01-01` = `-200`
+- movement `2026-01-02` = `+50`
+- balance `2026-01-02` = `1050`
+
+The interval `2026-01-01 -> 2026-01-02` only includes the `+50` movement from `2026-01-02`.
+If the `-200` from `2026-01-01` were counted again, the interval would be incorrectly reported as inconsistent.
 
 ## Input validation notes
 

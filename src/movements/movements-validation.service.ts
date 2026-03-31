@@ -68,7 +68,7 @@ export class MovementsValidationService {
       });
     }
 
-    const potentialDuplicateReasons = this.buildPotentialDuplicateReasons(
+    const potentialDuplicateReasons = this.findPotentialDuplicateReasons(
       movements,
       balances,
     );
@@ -223,7 +223,7 @@ export class MovementsValidationService {
       }));
   }
 
-  private buildPotentialDuplicateReasons(
+  private findPotentialDuplicateReasons(
     movements: NormalizedMovement[],
     balances: NormalizedBalance[],
   ): ValidationReasonDto[] {

@@ -1,5 +1,5 @@
 {
-  "name": "dougs",
+  "name": "movements-validator",
   "version": "0.1.0",
   "description": "Bank movements validation API",
   "private": true,

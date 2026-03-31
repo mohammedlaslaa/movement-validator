@@ -118,6 +118,49 @@ describe('MovementsValidationService', () => {
     }
   });
 
+  it('does not count movements on the starting balance date in the next interval', () => {
+    const result = service.validate({
+      movements: [
+        {
+          id: 1,
+          date: '2026-01-01',
+          wording: 'Already included in starting balance',
+          amount: -200,
+        },
+        {
+          id: 2,
+          date: '2026-01-02',
+          wording: 'Included in controlled interval',
+          amount: 50,
+        },
+      ],
+      balances: [
+        { date: '2026-01-01', balance: 1_000 },
+        { date: '2026-01-02', balance: 1_050 },
+      ],
+    });
+
+    expect(result.isValid).toBe(true);
+
+    if (result.isValid) {
+      expect(result.response.summary).toEqual({
+        checkedIntervals: 1,
+        validIntervals: 1,
+        invalidIntervals: 0,
+        uncontrolledMovementCount: 1,
+      });
+
+      expect(result.response.reasons).toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            code: 'UNCONTROLLED_MOVEMENTS',
+            movementIds: [1],
+          }),
+        ]),
+      );
+    }
+  });
+
   it('fails when there are not enough balance checkpoints', () => {
     const result = service.validate({
       movements: [],

@@ -18,7 +18,7 @@ async function bootstrap() {
   );
 
   const swaggerConfig = new DocumentBuilder()
-    .setTitle('Dougs Movements Validation API')
+    .setTitle('Movements Validation API')
     .setDescription(
       'API for validating bank movements against balance checkpoints.',
     )
